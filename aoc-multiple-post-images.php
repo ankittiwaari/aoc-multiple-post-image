@@ -24,7 +24,7 @@ function aoc_display_callback($post)
     <div class="aoc-img-container">
         <?php wp_nonce_field('aoc_save_images', 'aoc_save_img_nonce') ?>
         <?php if ($aoc_saved_images): foreach ($aoc_saved_images as $image): ?>
-                <div class="aoc-img-wrap"><img src="<?= wp_get_attachment_url($image) ?>" style="max-width:150px;"/><input type="hidden" name="aoc_images[]" id="aoc_img_input_<?= $image ?>" value="<?= $image ?>"><button data-img-id="<?= $image ?>" class="aoc-del-img" type="button">X</button></div>
+                <div class="aoc-img-wrap"><img src="<?= esc_url(wp_get_attachment_url(intval($image))) ?>" style="max-width:150px;"/><input type="hidden" name="aoc_images[]" id="aoc_img_input_<?= intval($image) ?>" value="<?= intval($image) ?>"><button data-img-id="<?= intval($image) ?>" class="aoc-del-img" type="button">X</button></div>
                 <?php
             endforeach;
         endif;
@@ -41,7 +41,7 @@ function aoc_save_meta_box($post_id)
     if (!wp_verify_nonce($_POST['aoc_save_img_nonce'], 'aoc_save_images')) {
         return;
     }
-    update_post_meta($post_id, 'aoc_multiple_images', $_POST['aoc_images']);
+    update_post_meta($post_id, 'aoc_multiple_images', sanitize_text_field($_POST['aoc_images']));
 }
 
 add_action('save_post', 'aoc_save_meta_box');
